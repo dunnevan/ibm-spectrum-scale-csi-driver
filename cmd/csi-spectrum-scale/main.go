@@ -26,6 +26,7 @@ import (
 	"github.com/golang/glog"
 
 	driver "github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin"
+	"github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin/settings"
 )
 
 var (
@@ -56,7 +57,8 @@ func main() {
 
 func handle() {
 	driver := driver.GetScaleDriver()
-	err := driver.SetupScaleDriver(*driverName, vendorVersion, *nodeID)
+	configMap := settings.LoadScaleConfigSettings()
+	err := driver.SetupScaleDriver(*driverName, vendorVersion, *nodeID, configMap)
 	if err != nil {
 		glog.Fatalf("Failed to initialize Scale CSI Driver: %v", err)
 	}

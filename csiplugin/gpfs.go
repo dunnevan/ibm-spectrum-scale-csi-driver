@@ -130,13 +130,13 @@ func (driver *ScaleDriver) ValidateControllerServiceRequest(c csi.ControllerServ
 	return status.Error(codes.InvalidArgument, "Invalid controller service request")
 }
 
-func (driver *ScaleDriver) SetupScaleDriver(name, vendorVersion, nodeID string) error {
+func (driver *ScaleDriver) SetupScaleDriver(name, vendorVersion, nodeID string, configMap settings.ScaleSettingsConfigMap) error {
 	glog.V(3).Infof("gpfs SetupScaleDriver. name: %s, version: %v, nodeID: %s", name, vendorVersion, nodeID)
 	if name == "" {
 		return fmt.Errorf("Driver name missing")
 	}
 
-	scmap, cmap, primary, err := driver.PluginInitialize()
+	scmap, cmap, primary, err := driver.PluginInitialize(configMap)
 	if err != nil {
 		glog.Errorf("Error in plugin initialization: %s", err)
 		return err
@@ -167,9 +167,8 @@ func (driver *ScaleDriver) SetupScaleDriver(name, vendorVersion, nodeID string) 
 	return nil
 }
 
-func (driver *ScaleDriver) PluginInitialize() (map[string]connectors.SpectrumScaleConnector, settings.ScaleSettingsConfigMap, settings.Primary, error) { //nolint:funlen
+func (driver *ScaleDriver) PluginInitialize(scaleConfig settings.ScaleSettingsConfigMap) (map[string]connectors.SpectrumScaleConnector, settings.ScaleSettingsConfigMap, settings.Primary, error) {
 	glog.V(3).Infof("gpfs PluginInitialize")
-	scaleConfig := settings.LoadScaleConfigSettings()
 
 	isValid, err := driver.ValidateScaleConfigParameters(scaleConfig)
 	if !isValid {
