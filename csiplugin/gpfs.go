@@ -78,7 +78,7 @@ func NewControllerServer(d *ScaleDriver, connMap map[string]connectors.SpectrumS
 }
 
 func NewNodeServer(d *ScaleDriver) *ScaleNodeServer {
-	glog.V(3).Infof("gpfs NewNodeServer")
+        glog.V(3).Infof("gpfs NewNodeServer")
 	return &ScaleNodeServer{
 		Driver: d,
 	}
