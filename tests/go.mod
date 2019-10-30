@@ -1,18 +1,20 @@
-module github.com/IBM/ibm-spectrum-scale-csi-driver/tests/e2e
+module github.com/IBM/ibm-spectrum-scale-csi-driver/tests
 
 go 1.13
 
 require (
 	github.com/IBM/ibm-spectrum-scale-csi-driver v0.0.0-00010101000000-000000000000
-	github.com/onsi/ginkgo v1.10.2
-	github.com/onsi/gomega v1.7.0
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+	github.com/kubernetes-csi/csi-test v2.2.0+incompatible
+	github.com/onsi/ginkgo v1.10.3
+	github.com/onsi/gomega v1.7.1
 	k8s.io/api v0.0.0
 	k8s.io/apimachinery v0.0.0
 	k8s.io/kubernetes v1.16.2
 )
 
 replace (
-	github.com/IBM/ibm-spectrum-scale-csi-driver => ../../
+	github.com/IBM/ibm-spectrum-scale-csi-driver => ../
 
 	k8s.io/api => k8s.io/kubernetes/staging/src/k8s.io/api v0.0.0-20190909044717-35cf6b6cbc7c
 	k8s.io/apiextensions-apiserver => k8s.io/kubernetes/staging/src/k8s.io/apiextensions-apiserver v0.0.0-20190909044717-35cf6b6cbc7c

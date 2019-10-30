@@ -23,7 +23,6 @@ import (
 	scale "github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin"
 	"github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin/connectors"
 	"github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin/settings"
-	mountmanager "github.com/IBM/ibm-spectrum-scale-csi-driver/pkg/mount-manager"
 	"github.com/golang/glog"
 	"github.com/kubernetes-csi/csi-test/pkg/sanity"
 )
@@ -100,7 +99,6 @@ func TestScaleDriver(t *testing.T) {
 		"explodable",
 		"edunn-k8s-master.fyre.ibm.com",
 		configMap,
-		mountmanager.NewSafeMounter(),
 	)
 	if err != nil {
 		glog.Fatalf("Failed to initialize Scale CSI Driver: %v", err)
