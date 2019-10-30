@@ -57,9 +57,10 @@ func TestScaleDriver(t *testing.T) {
 	*/
 
 	var parameters = map[string]string{
+		connectors.UserSpecifiedInodeLimit:   "1024",
 		connectors.UserSpecifiedVolBackendFs: "fs1",
-		connectors.UserSpecifiedVolDirPath:   "/ibm/fs1/test_dir/",
 		connectors.UserSpecifiedClusterId:    "16482346744146153652",
+		connectors.UserSpecifiedVolDirPath:   "/ibm/fs1/test_dir/",
 	}
 
 	config := &sanity.Config{
@@ -80,13 +81,13 @@ func TestScaleDriver(t *testing.T) {
 				ID: "16482346744146153652",
 				RestAPI: []settings.RestAPI{
 					{
-						GuiHost: "",
+						GuiHost: "edunn-k8s-master.fyre.ibm.com",
 						GuiPort: 443,
 					},
 				},
 				Secrets:      "guisecret",
-				MgmtUsername: "",
-				MgmtPassword: "",
+				MgmtUsername: "evan",
+				MgmtPassword: "Passw0rd",
 			},
 		},
 	}
@@ -97,7 +98,7 @@ func TestScaleDriver(t *testing.T) {
 	err := driver.SetupScaleDriver(
 		"csi-scale-test",
 		"explodable",
-		"{GuiHost}",
+		"edunn-k8s-master.fyre.ibm.com",
 		configMap,
 		mountmanager.NewSafeMounter(),
 	)
