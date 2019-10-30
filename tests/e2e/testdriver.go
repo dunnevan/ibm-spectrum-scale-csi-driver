@@ -117,9 +117,9 @@ func (d *scaleDriver) GetDynamicProvisionStorageClass(config *testsuites.PerTest
 
 	provisioner := config.GetUniqueDriverName()
 	parameters := map[string]string{
-		connectors.UserSpecifiedClusterId:       "16482346744146153652",
-		connectors.UserSpecifiedVolBackendFs:      "fs1",
-		connectors.UserSpecifiedInodeLimit:      "1024",
+		connectors.UserSpecifiedClusterId:    "16482346744146153652",
+		connectors.UserSpecifiedVolBackendFs: "fs1",
+		connectors.UserSpecifiedInodeLimit:   "1024",
 	}
 	bindingMode := storagev1.VolumeBindingImmediate
 	ns := config.Framework.Namespace.Name
