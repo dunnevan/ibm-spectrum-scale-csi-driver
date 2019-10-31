@@ -24,9 +24,9 @@ import (
 	"strings"
 
 	"github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin/connectors"
-	"github.com/golang/glog"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"k8s.io/klog"
 )
 
 type scaleVolume struct {
@@ -131,7 +131,7 @@ func getScaleVolumeOptions(volOptions map[string]string) (*scaleVolume, error) {
 }
 
 func executeCmd(command string, args []string) ([]byte, error) {
-	glog.V(5).Infof("gpfs_util executeCmd")
+	klog.V(5).Infof("gpfs_util executeCmd")
 
 	cmd := exec.Command(command, args...)
 	var stdout bytes.Buffer

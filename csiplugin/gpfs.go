@@ -25,9 +25,9 @@ import (
 	"github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin/settings"
 	"github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin/utils"
 	"github.com/container-storage-interface/spec/lib/go/csi"
-	"github.com/golang/glog"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"k8s.io/klog"
 )
 
 // PluginFolder defines the location of scaleplugin
@@ -55,19 +55,19 @@ type ScaleDriver struct {
 }
 
 func GetScaleDriver() *ScaleDriver {
-	glog.V(3).Infof("gpfs GetScaleDriver")
+	klog.V(3).Infof("gpfs GetScaleDriver")
 	return &ScaleDriver{}
 }
 
 func NewIdentityServer(d *ScaleDriver) *ScaleIdentityServer {
-	glog.V(3).Infof("gpfs NewIdentityServer")
+	klog.V(3).Infof("gpfs NewIdentityServer")
 	return &ScaleIdentityServer{
 		Driver: d,
 	}
 }
 
 func NewControllerServer(d *ScaleDriver, connMap map[string]connectors.SpectrumScaleConnector, cmap settings.ScaleSettingsConfigMap, primary settings.Primary) *ScaleControllerServer {
-	glog.V(3).Infof("gpfs NewControllerServer")
+	klog.V(3).Infof("gpfs NewControllerServer")
 	d.connmap = connMap
 	d.cmap = cmap
 	d.primary = primary
@@ -78,17 +78,17 @@ func NewControllerServer(d *ScaleDriver, connMap map[string]connectors.SpectrumS
 }
 
 func NewNodeServer(d *ScaleDriver) *ScaleNodeServer {
-        glog.V(3).Infof("gpfs NewNodeServer")
+	klog.V(3).Infof("gpfs NewNodeServer")
 	return &ScaleNodeServer{
 		Driver: d,
 	}
 }
 
 func (driver *ScaleDriver) AddVolumeCapabilityAccessModes(vc []csi.VolumeCapability_AccessMode_Mode) error {
-	glog.V(3).Infof("gpfs AddVolumeCapabilityAccessModes")
+	klog.V(3).Infof("gpfs AddVolumeCapabilityAccessModes")
 	var vca []*csi.VolumeCapability_AccessMode
 	for _, c := range vc {
-		glog.V(3).Infof("Enabling volume access mode: %v", c.String())
+		klog.V(3).Infof("Enabling volume access mode: %v", c.String())
 		vca = append(vca, NewVolumeCapabilityAccessMode(c))
 	}
 	driver.vcap = vca
@@ -96,10 +96,10 @@ func (driver *ScaleDriver) AddVolumeCapabilityAccessModes(vc []csi.VolumeCapabil
 }
 
 func (driver *ScaleDriver) AddControllerServiceCapabilities(cl []csi.ControllerServiceCapability_RPC_Type) error {
-	glog.V(3).Infof("gpfs AddControllerServiceCapabilities")
+	klog.V(3).Infof("gpfs AddControllerServiceCapabilities")
 	var csc []*csi.ControllerServiceCapability
 	for _, c := range cl {
-		glog.V(3).Infof("Enabling controller service capability: %v", c.String())
+		klog.V(3).Infof("Enabling controller service capability: %v", c.String())
 		csc = append(csc, NewControllerServiceCapability(c))
 	}
 	driver.cscap = csc
@@ -107,10 +107,10 @@ func (driver *ScaleDriver) AddControllerServiceCapabilities(cl []csi.ControllerS
 }
 
 func (driver *ScaleDriver) AddNodeServiceCapabilities(nl []csi.NodeServiceCapability_RPC_Type) error {
-	glog.V(3).Infof("gpfs AddNodeServiceCapabilities")
+	klog.V(3).Infof("gpfs AddNodeServiceCapabilities")
 	var nsc []*csi.NodeServiceCapability
 	for _, n := range nl {
-		glog.V(3).Infof("Enabling node service capability: %v", n.String())
+		klog.V(3).Infof("Enabling node service capability: %v", n.String())
 		nsc = append(nsc, NewNodeServiceCapability(n))
 	}
 	driver.nscap = nsc
@@ -118,7 +118,7 @@ func (driver *ScaleDriver) AddNodeServiceCapabilities(nl []csi.NodeServiceCapabi
 }
 
 func (driver *ScaleDriver) ValidateControllerServiceRequest(c csi.ControllerServiceCapability_RPC_Type) error {
-	glog.V(3).Infof("gpfs ValidateControllerServiceRequest")
+	klog.V(3).Infof("gpfs ValidateControllerServiceRequest")
 	if c == csi.ControllerServiceCapability_RPC_UNKNOWN {
 		return nil
 	}
@@ -131,14 +131,14 @@ func (driver *ScaleDriver) ValidateControllerServiceRequest(c csi.ControllerServ
 }
 
 func (driver *ScaleDriver) SetupScaleDriver(name, vendorVersion, nodeID string, configMap settings.ScaleSettingsConfigMap) error {
-	glog.V(3).Infof("gpfs SetupScaleDriver. name: %s, version: %v, nodeID: %s", name, vendorVersion, nodeID)
+	klog.V(3).Infof("gpfs SetupScaleDriver. name: %s, version: %v, nodeID: %s", name, vendorVersion, nodeID)
 	if name == "" {
 		return fmt.Errorf("Driver name missing")
 	}
 
 	scmap, cmap, primary, err := driver.PluginInitialize(configMap)
 	if err != nil {
-		glog.Errorf("Error in plugin initialization: %s", err)
+		klog.Errorf("Error in plugin initialization: %s", err)
 		return err
 	}
 
@@ -168,11 +168,11 @@ func (driver *ScaleDriver) SetupScaleDriver(name, vendorVersion, nodeID string, 
 }
 
 func (driver *ScaleDriver) PluginInitialize(scaleConfig settings.ScaleSettingsConfigMap) (map[string]connectors.SpectrumScaleConnector, settings.ScaleSettingsConfigMap, settings.Primary, error) {
-	glog.V(3).Infof("gpfs PluginInitialize")
+	klog.V(3).Infof("gpfs PluginInitialize")
 
 	isValid, err := driver.ValidateScaleConfigParameters(scaleConfig)
 	if !isValid {
-		glog.Errorf("Parameter validation failure")
+		klog.Errorf("Parameter validation failure")
 		return nil, settings.ScaleSettingsConfigMap{}, settings.Primary{}, err
 	}
 
@@ -184,18 +184,18 @@ func (driver *ScaleDriver) PluginInitialize(scaleConfig settings.ScaleSettingsCo
 
 		sc, err := connectors.GetSpectrumScaleConnector(cluster)
 		if err != nil {
-			glog.Errorf("Unable to initialize Spectrum Scale connector for cluster %s", cluster.ID)
+			klog.Errorf("Unable to initialize Spectrum Scale connector for cluster %s", cluster.ID)
 			return nil, scaleConfig, primaryInfo, err
 		}
 
 		// validate cluster ID
 		clusterId, err := sc.GetClusterId()
 		if err != nil {
-			glog.Errorf("Error getting cluster ID: %v", err)
+			klog.Errorf("Error getting cluster ID: %v", err)
 			return nil, scaleConfig, primaryInfo, err
 		}
 		if cluster.ID != clusterId {
-			glog.Errorf("Cluster ID %s from scale config doesnt match the ID from cluster %s.", cluster.ID, clusterId)
+			klog.Errorf("Cluster ID %s from scale config doesnt match the ID from cluster %s.", cluster.ID, clusterId)
 			return nil, scaleConfig, primaryInfo, fmt.Errorf("Cluster ID doesnt match the cluster")
 		}
 
@@ -207,7 +207,7 @@ func (driver *ScaleDriver) PluginInitialize(scaleConfig settings.ScaleSettingsCo
 			// check if primary filesystem exists and mounted on atleast one node
 			fsMount, err := sc.GetFilesystemMountDetails(cluster.Primary.GetPrimaryFs())
 			if err != nil {
-				glog.Errorf("Error in getting filesystem details for %s", cluster.Primary.GetPrimaryFs())
+				klog.Errorf("Error in getting filesystem details for %s", cluster.Primary.GetPrimaryFs())
 				return nil, scaleConfig, cluster.Primary, err
 			}
 			if fsMount.NodesMounted == nil || len(fsMount.NodesMounted) == 0 {
@@ -232,10 +232,10 @@ func (driver *ScaleDriver) PluginInitialize(scaleConfig settings.ScaleSettingsCo
 			// check if primary filesystem exists on remote cluster and mounted on atleast one node
 			fsMount, err := sconn.GetFilesystemMountDetails(fs)
 			if err != nil {
-				glog.Errorf("Error in getting filesystem details for %s from cluster %s", fs, primaryInfo.RemoteCluster)
+				klog.Errorf("Error in getting filesystem details for %s from cluster %s", fs, primaryInfo.RemoteCluster)
 				return scaleConnMap, scaleConfig, primaryInfo, err
 			}
-			glog.Infof("remote fsMount = %v", fsMount)
+			klog.Infof("remote fsMount = %v", fsMount)
 			if fsMount.NodesMounted == nil || len(fsMount.NodesMounted) == 0 {
 				return scaleConnMap, scaleConfig, primaryInfo, fmt.Errorf("Primary filesystem not mounted on any node on cluster %s", primaryInfo.RemoteCluster)
 			}
@@ -245,7 +245,7 @@ func (driver *ScaleDriver) PluginInitialize(scaleConfig settings.ScaleSettingsCo
 
 	fsetlinkpath, err := driver.CreatePrimaryFileset(sconn, fs, fsmount, primaryInfo.PrimaryFset, primaryInfo.GetInodeLimit())
 	if err != nil {
-		glog.Errorf("Error in creating primary fileset")
+		klog.Errorf("Error in creating primary fileset")
 		return scaleConnMap, scaleConfig, primaryInfo, err
 	}
 
@@ -256,26 +256,26 @@ func (driver *ScaleDriver) PluginInitialize(scaleConfig settings.ScaleSettingsCo
 	// Validate hostpath from daemonset is valid
 	err = driver.ValidateHostpath(primaryInfo.PrimaryFSMount, fsetlinkpath)
 	if err != nil {
-		glog.Errorf("Hostpath validation failed")
+		klog.Errorf("Hostpath validation failed")
 		return scaleConnMap, scaleConfig, primaryInfo, err
 	}
 
 	// Create directory where volume symlinks will reside
 	symlinkPath, relativePath, err := driver.CreateSymlinkPath(scaleConnMap["primary"], primaryInfo.GetPrimaryFs(), primaryInfo.PrimaryFSMount, fsetlinkpath)
 	if err != nil {
-		glog.Errorf("Error in creating volumes directory")
+		klog.Errorf("Error in creating volumes directory")
 		return scaleConnMap, scaleConfig, primaryInfo, err
 	}
 	primaryInfo.SymlinkAbsolutePath = symlinkPath
 	primaryInfo.SymlinkRelativePath = relativePath
 	primaryInfo.PrimaryFsetLink = fsetlinkpath
 
-	glog.Infof("IBM Spectrum Scale: Plugin initialized")
+	klog.Infof("IBM Spectrum Scale: Plugin initialized")
 	return scaleConnMap, scaleConfig, primaryInfo, nil
 }
 
 func (driver *ScaleDriver) CreatePrimaryFileset(sc connectors.SpectrumScaleConnector, primaryFS string, fsmount string, filesetName string, inodeLimit string) (string, error) {
-	glog.V(4).Infof("gpfs CreatePrimaryFileset. primaryFS: %s, mountpoint: %s, filesetName: %s", primaryFS, fsmount, filesetName)
+	klog.V(4).Infof("gpfs CreatePrimaryFileset. primaryFS: %s, mountpoint: %s, filesetName: %s", primaryFS, fsmount, filesetName)
 
 	// create primary fileset if not already created
 	fsetResponse, err := sc.ListFileset(primaryFS, filesetName)
@@ -283,36 +283,36 @@ func (driver *ScaleDriver) CreatePrimaryFileset(sc connectors.SpectrumScaleConne
 	newlinkpath := path.Join(fsmount, filesetName)
 
 	if err != nil {
-		glog.Infof("Primary fileset %s not found. Creating it.", filesetName)
+		klog.Infof("Primary fileset %s not found. Creating it.", filesetName)
 		opts := make(map[string]interface{})
 		if inodeLimit != "" {
 			opts[connectors.UserSpecifiedInodeLimit] = inodeLimit
 		}
 		err = sc.CreateFileset(primaryFS, filesetName, opts)
 		if err != nil {
-			glog.Errorf("Unable to create primary fileset %s", filesetName)
+			klog.Errorf("Unable to create primary fileset %s", filesetName)
 			return "", err
 		}
 		linkpath = newlinkpath
 	} else if linkpath == "" || linkpath == "--" {
-		glog.Infof("Primary fileset %s not linked. Linking it.", filesetName)
+		klog.Infof("Primary fileset %s not linked. Linking it.", filesetName)
 		err = sc.LinkFileset(primaryFS, filesetName, newlinkpath)
 		if err != nil {
-			glog.Errorf("Unable to link primary fileset %s", filesetName)
+			klog.Errorf("Unable to link primary fileset %s", filesetName)
 			return "", err
 		} else {
-			glog.Infof("Linked primary fileset %s. Linkpath: %s", newlinkpath, filesetName)
+			klog.Infof("Linked primary fileset %s. Linkpath: %s", newlinkpath, filesetName)
 		}
 		linkpath = newlinkpath
 	} else {
-		glog.Infof("Primary fileset %s exists and linked at %s", filesetName, linkpath)
+		klog.Infof("Primary fileset %s exists and linked at %s", filesetName, linkpath)
 	}
 
 	return linkpath, nil
 }
 
 func (driver *ScaleDriver) CreateSymlinkPath(sc connectors.SpectrumScaleConnector, fs string, fsmount string, fsetlinkpath string) (string, string, error) {
-	glog.V(4).Infof("gpfs CreateSymlinkPath. filesystem: %s, mountpoint: %s, filesetlinkpath: %s", fs, fsmount, fsetlinkpath)
+	klog.V(4).Infof("gpfs CreateSymlinkPath. filesystem: %s, mountpoint: %s, filesetlinkpath: %s", fs, fsmount, fsetlinkpath)
 
 	dirpath := strings.Replace(fsetlinkpath, fsmount, "", 1)
 	dirpath = strings.Trim(dirpath, "!/")
@@ -323,7 +323,7 @@ func (driver *ScaleDriver) CreateSymlinkPath(sc connectors.SpectrumScaleConnecto
 
 	err := sc.MakeDirectory(fs, dirpath, 0, 0)
 	if err != nil {
-		glog.Errorf("Make directory failed on filesystem %s, path = %s", fs, dirpath)
+		klog.Errorf("Make directory failed on filesystem %s, path = %s", fs, dirpath)
 		return symlinkpath, dirpath, err
 	}
 
@@ -331,7 +331,7 @@ func (driver *ScaleDriver) CreateSymlinkPath(sc connectors.SpectrumScaleConnecto
 }
 
 func (driver *ScaleDriver) ValidateHostpath(mountpath string, linkpath string) error {
-	glog.V(4).Infof("gpfs ValidateHostpath. mountpath: %s, linkpath: %s", mountpath, linkpath)
+	klog.V(4).Infof("gpfs ValidateHostpath. mountpath: %s, linkpath: %s", mountpath, linkpath)
 
 	hostpath := utils.GetEnv("SCALE_HOSTPATH", "")
 	if hostpath == "" {
@@ -367,7 +367,7 @@ func (driver *ScaleDriver) ValidateHostpath(mountpath string, linkpath string) e
 }
 
 func (driver *ScaleDriver) ValidateScaleConfigParameters(scaleConfig settings.ScaleSettingsConfigMap) (bool, error) {
-	glog.V(4).Infof("gpfs ValidateScaleConfigParameters.")
+	klog.V(4).Infof("gpfs ValidateScaleConfigParameters.")
 	if len(scaleConfig.Clusters) == 0 {
 		return false, fmt.Errorf("Missing cluster information in Spectrum Scale configuration")
 	}
@@ -420,7 +420,7 @@ func (driver *ScaleDriver) ValidateScaleConfigParameters(scaleConfig settings.Sc
 }
 
 func (driver *ScaleDriver) Run(endpoint string) {
-	glog.Infof("Driver: %v version: %v", driver.name, driver.vendorVersion)
+	klog.Infof("Driver: %v version: %v", driver.name, driver.vendorVersion)
 	s := NewNonBlockingGRPCServer()
 	s.Start(endpoint, driver.ids, driver.cs, driver.ns)
 	s.Wait()

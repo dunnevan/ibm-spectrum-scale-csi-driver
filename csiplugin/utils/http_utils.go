@@ -26,7 +26,7 @@ import (
 	"strings"
 
 	//"github.com/gorilla/mux"
-	"github.com/golang/glog"
+	"k8s.io/klog"
 )
 
 /*
@@ -41,7 +41,7 @@ func ExtractErrorResponse(response *http.Response) error {
 */
 
 func UnmarshalResponse(r *http.Response, object interface{}) error {
-	glog.V(5).Infof("http_utils UnmarshalResponse. response: %v", r.Body)
+	klog.V(5).Infof("http_utils UnmarshalResponse. response: %v", r.Body)
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -57,7 +57,7 @@ func UnmarshalResponse(r *http.Response, object interface{}) error {
 }
 
 func FormatURL(url string, entries ...string) string {
-	glog.V(5).Infof("http_utils FormatURL. url: %s", url)
+	klog.V(5).Infof("http_utils FormatURL. url: %s", url)
 
 	base := url
 	if !strings.HasSuffix(url, "/") {
@@ -71,8 +71,8 @@ func FormatURL(url string, entries ...string) string {
 }
 
 func HttpExecuteUserAuth(httpClient *http.Client, requestType string, requestURL string, user string, password string, rawPayload interface{}) (*http.Response, error) {
-	glog.V(5).Infof("http_utils HttpExecuteUserAuth. type: %s, url: %s, user: %s", requestType, requestURL, user)
-	glog.V(6).Infof("http_utils HttpExecuteUserAuth. request payload: %v", rawPayload)
+	klog.V(5).Infof("http_utils HttpExecuteUserAuth. type: %s, url: %s, user: %s", requestType, requestURL, user)
+	klog.V(6).Infof("http_utils HttpExecuteUserAuth. request payload: %v", rawPayload)
 
 	payload, err := json.MarshalIndent(rawPayload, "", " ")
 	if err != nil {
@@ -94,13 +94,13 @@ func HttpExecuteUserAuth(httpClient *http.Client, requestType string, requestURL
 	request.Header.Add("Accept", "application/json")
 
 	request.SetBasicAuth(user, password)
-	glog.V(6).Infof("http_utils HttpExecuteUserAuth request: %+v", request)
+	klog.V(6).Infof("http_utils HttpExecuteUserAuth request: %+v", request)
 
 	return httpClient.Do(request)
 }
 
 func WriteResponse(w http.ResponseWriter, code int, object interface{}) {
-	glog.V(5).Infof("http_utils WriteResponse. code: %d, object: %v", code, object)
+	klog.V(5).Infof("http_utils WriteResponse. code: %d, object: %v", code, object)
 
 	data, err := json.Marshal(object)
 	if err != nil {
@@ -113,7 +113,7 @@ func WriteResponse(w http.ResponseWriter, code int, object interface{}) {
 }
 
 func Unmarshal(r *http.Request, object interface{}) error {
-	glog.V(5).Infof("http_utils Unmarshal. request: %v, object: %v", r, object)
+	klog.V(5).Infof("http_utils Unmarshal. request: %v, object: %v", r, object)
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -129,7 +129,7 @@ func Unmarshal(r *http.Request, object interface{}) error {
 }
 
 func UnmarshalDataFromRequest(r *http.Request, object interface{}) error {
-	glog.V(5).Infof("http_utils UnmarshalDataFromRequest. request: %v, object: %v", r, object)
+	klog.V(5).Infof("http_utils UnmarshalDataFromRequest. request: %v, object: %v", r, object)
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {

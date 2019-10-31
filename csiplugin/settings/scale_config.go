@@ -23,7 +23,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/golang/glog"
+	"k8s.io/klog"
 )
 
 type ScaleSettingsConfigMap struct {
@@ -101,30 +101,30 @@ const (
 )
 
 func LoadScaleConfigSettings() ScaleSettingsConfigMap {
-	glog.V(5).Infof("scale_config LoadScaleConfigSettings")
+	klog.V(5).Infof("scale_config LoadScaleConfigSettings")
 
 	file, e := ioutil.ReadFile(ConfigMapFile) // TODO
 	if e != nil {
-		glog.Errorf("Spectrum Scale configuration not found: %v", e)
+		klog.Errorf("Spectrum Scale configuration not found: %v", e)
 		return ScaleSettingsConfigMap{}
 	}
 	cmsj := &ScaleSettingsConfigMap{}
 	e = json.Unmarshal(file, cmsj)
 	if e != nil {
-		glog.Errorf("Error in unmarshalling Spectrum Scale configuration json: %v", e)
+		klog.Errorf("Error in unmarshalling Spectrum Scale configuration json: %v", e)
 		return ScaleSettingsConfigMap{}
 	}
 
 	e = HandleSecretsAndCerts(cmsj)
 	if e != nil {
-		glog.Errorf("Error in secrets or certificates: %v", e)
+		klog.Errorf("Error in secrets or certificates: %v", e)
 		return ScaleSettingsConfigMap{}
 	}
 	return *cmsj
 }
 
 func HandleSecretsAndCerts(cmap *ScaleSettingsConfigMap) error {
-	glog.V(5).Infof("scale_config HandleSecrets")
+	klog.V(5).Infof("scale_config HandleSecrets")
 	for i := 0; i < len(cmap.Clusters); i++ {
 		if cmap.Clusters[i].Secrets != "" {
 			unamePath := path.Join(SecretBasePath, cmap.Clusters[i].Secrets, "username")

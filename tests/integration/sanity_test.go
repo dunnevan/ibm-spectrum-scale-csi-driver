@@ -23,8 +23,8 @@ import (
 	scale "github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin"
 	"github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin/connectors"
 	"github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin/settings"
-	"github.com/golang/glog"
 	"github.com/kubernetes-csi/csi-test/pkg/sanity"
+	"k8s.io/klog"
 )
 
 func TestScaleDriver(t *testing.T) {
@@ -101,7 +101,7 @@ func TestScaleDriver(t *testing.T) {
 		configMap,
 	)
 	if err != nil {
-		glog.Fatalf("Failed to initialize Scale CSI Driver: %v", err)
+		klog.Fatalf("Failed to initialize Scale CSI Driver: %v", err)
 	}
 
 	go driver.Run("unix://" + address)

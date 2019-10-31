@@ -23,7 +23,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/golang/glog"
+	"k8s.io/klog"
 
 	driver "github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin"
 	"github.com/IBM/ibm-spectrum-scale-csi-driver/csiplugin/settings"
@@ -42,12 +42,15 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
+	klogFlags := flag.NewFlagSet("klog", flag.ExitOnError)
+	klog.InitFlags(klogFlags)
+
 	if err := createPersistentStorage(path.Join(driver.PluginFolder, "controller")); err != nil {
-		glog.Errorf("failed to create persistent storage for controller %v", err)
+		klog.Errorf("failed to create persistent storage for controller %v", err)
 		os.Exit(1)
 	}
 	if err := createPersistentStorage(path.Join(driver.PluginFolder, "node")); err != nil {
-		glog.Errorf("failed to create persistent storage for node %v", err)
+		klog.Errorf("failed to create persistent storage for node %v", err)
 		os.Exit(1)
 	}
 
@@ -60,7 +63,7 @@ func handle() {
 	configMap := settings.LoadScaleConfigSettings()
 	err := driver.SetupScaleDriver(*driverName, vendorVersion, *nodeID, configMap)
 	if err != nil {
-		glog.Fatalf("Failed to initialize Scale CSI Driver: %v", err)
+		klog.Fatalf("Failed to initialize Scale CSI Driver: %v", err)
 	}
 	driver.Run(*endpoint)
 }

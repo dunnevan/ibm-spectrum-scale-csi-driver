@@ -20,9 +20,9 @@ import (
 	"context"
 
 	"github.com/container-storage-interface/spec/lib/go/csi"
-	"github.com/golang/glog"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"k8s.io/klog"
 )
 
 type ScaleIdentityServer struct {
@@ -44,12 +44,12 @@ func (is *ScaleIdentityServer) GetPluginCapabilities(ctx context.Context, req *c
 }
 
 func (is *ScaleIdentityServer) Probe(ctx context.Context, req *csi.ProbeRequest) (*csi.ProbeResponse, error) {
-	glog.V(4).Infof("Probe called with args: %#v", req)
+	klog.V(4).Infof("Probe called with args: %#v", req)
 	return &csi.ProbeResponse{}, nil
 }
 
 func (is *ScaleIdentityServer) GetPluginInfo(ctx context.Context, req *csi.GetPluginInfoRequest) (*csi.GetPluginInfoResponse, error) {
-	glog.V(5).Infof("Using default GetPluginInfo")
+	klog.V(5).Infof("Using default GetPluginInfo")
 
 	if is.Driver.name == "" {
 		return nil, status.Error(codes.Unavailable, "Driver name not configured")

@@ -21,8 +21,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/golang/glog"
 	"golang.org/x/net/context"
+	"k8s.io/klog"
 
 	"github.com/container-storage-interface/spec/lib/go/csi"
 	"google.golang.org/grpc/codes"
@@ -36,9 +36,9 @@ type ScaleNodeServer struct {
 }
 
 func (ns *ScaleNodeServer) NodePublishVolume(ctx context.Context, req *csi.NodePublishVolumeRequest) (*csi.NodePublishVolumeResponse, error) {
-	glog.V(3).Infof("nodeserver NodePublishVolume")
+	klog.V(3).Infof("nodeserver NodePublishVolume")
 
-	glog.V(4).Infof("NodePublishVolume called with req: %#v", req)
+	klog.V(4).Infof("NodePublishVolume called with req: %#v", req)
 
 	// Validate Arguments
 	targetPath := req.GetTargetPath()
@@ -75,12 +75,12 @@ func (ns *ScaleNodeServer) NodePublishVolume(ctx context.Context, req *csi.NodeP
 		return nil, status.Error(codes.InvalidArgument, "NodePublishVolume VolumeID is not in proper format")
 	}
 
-	glog.Infof("Target SpectrumScale Symlink Path : %v\n", targetSlnkPath[1])
+	klog.Infof("Target SpectrumScale Symlink Path : %v\n", targetSlnkPath[1])
 
 	if _, err := os.Stat(targetPath); err == nil {
 		args := []string{targetPath}
 		outputBytes, err := executeCmd("rmdir", args)
-		glog.Infof("Cmd rmdir args: %v Output: %v", args, outputBytes)
+		klog.Infof("Cmd rmdir args: %v Output: %v", args, outputBytes)
 		if err != nil {
 			return nil, err
 		}
@@ -88,18 +88,18 @@ func (ns *ScaleNodeServer) NodePublishVolume(ctx context.Context, req *csi.NodeP
 
 	args := []string{"-sf", targetSlnkPath[1], targetPath}
 	outputBytes, err := executeCmd("/bin/ln", args)
-	glog.Infof("Cmd /bin/ln args: %v Output: %v", args, outputBytes)
+	klog.Infof("Cmd /bin/ln args: %v Output: %v", args, outputBytes)
 	if err != nil {
 		return nil, err
 	}
 
-	glog.V(4).Infof("Successfully mounted %s", targetPath)
+	klog.V(4).Infof("Successfully mounted %s", targetPath)
 	return &csi.NodePublishVolumeResponse{}, nil
 }
 
 func (ns *ScaleNodeServer) NodeUnpublishVolume(ctx context.Context, req *csi.NodeUnpublishVolumeRequest) (*csi.NodeUnpublishVolumeResponse, error) {
-	glog.V(3).Infof("nodeserver NodeUnpublishVolume")
-	glog.V(4).Infof("NodeUnpublishVolume called with args: %v", req)
+	klog.V(3).Infof("nodeserver NodeUnpublishVolume")
+	klog.V(4).Infof("NodeUnpublishVolume called with args: %v", req)
 	// Validate Arguments
 	targetPath := req.GetTargetPath()
 	volID := req.GetVolumeId()
@@ -118,10 +118,10 @@ func (ns *ScaleNodeServer) NodeUnpublishVolume(ctx context.Context, req *csi.Nod
 
 func (ns *ScaleNodeServer) NodeStageVolume(ctx context.Context, req *csi.NodeStageVolumeRequest) (
 	*csi.NodeStageVolumeResponse, error) {
-	glog.V(3).Infof("nodeserver NodeStageVolume")
+	klog.V(3).Infof("nodeserver NodeStageVolume")
 	ns.mux.Lock()
 	defer ns.mux.Unlock()
-	glog.V(4).Infof("NodeStageVolume called with req: %#v", req)
+	klog.V(4).Infof("NodeStageVolume called with req: %#v", req)
 
 	// Validate Arguments
 	volumeID := req.GetVolumeId()
@@ -141,10 +141,10 @@ func (ns *ScaleNodeServer) NodeStageVolume(ctx context.Context, req *csi.NodeSta
 
 func (ns *ScaleNodeServer) NodeUnstageVolume(ctx context.Context, req *csi.NodeUnstageVolumeRequest) (
 	*csi.NodeUnstageVolumeResponse, error) {
-	glog.V(3).Infof("nodeserver NodeUnstageVolume")
+	klog.V(3).Infof("nodeserver NodeUnstageVolume")
 	ns.mux.Lock()
 	defer ns.mux.Unlock()
-	glog.V(4).Infof("NodeUnstageVolume called with req: %#v", req)
+	klog.V(4).Infof("NodeUnstageVolume called with req: %#v", req)
 
 	// Validate arguments
 	volumeID := req.GetVolumeId()
@@ -160,14 +160,14 @@ func (ns *ScaleNodeServer) NodeUnstageVolume(ctx context.Context, req *csi.NodeU
 }
 
 func (ns *ScaleNodeServer) NodeGetCapabilities(ctx context.Context, req *csi.NodeGetCapabilitiesRequest) (*csi.NodeGetCapabilitiesResponse, error) {
-	glog.V(4).Infof("NodeGetCapabilities called with req: %#v", req)
+	klog.V(4).Infof("NodeGetCapabilities called with req: %#v", req)
 	return &csi.NodeGetCapabilitiesResponse{
 		Capabilities: ns.Driver.nscap,
 	}, nil
 }
 
 func (ns *ScaleNodeServer) NodeGetInfo(ctx context.Context, req *csi.NodeGetInfoRequest) (*csi.NodeGetInfoResponse, error) {
-	glog.V(4).Infof("NodeGetInfo called with req: %#v", req)
+	klog.V(4).Infof("NodeGetInfo called with req: %#v", req)
 	return &csi.NodeGetInfoResponse{
 		NodeId: ns.Driver.nodeID,
 	}, nil
