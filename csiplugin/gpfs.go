@@ -167,7 +167,7 @@ func (driver *ScaleDriver) SetupScaleDriver(name, vendorVersion, nodeID string, 
 	return nil
 }
 
-func (driver *ScaleDriver) PluginInitialize(scaleConfig settings.ScaleSettingsConfigMap) (map[string]connectors.SpectrumScaleConnector, settings.ScaleSettingsConfigMap, settings.Primary, error) {
+func (driver *ScaleDriver) PluginInitialize(scaleConfig settings.ScaleSettingsConfigMap) (map[string]connectors.SpectrumScaleConnector, settings.ScaleSettingsConfigMap, settings.Primary, error) { //nolint:funlen
 	klog.V(3).Infof("gpfs PluginInitialize")
 
 	isValid, err := driver.ValidateScaleConfigParameters(scaleConfig)
