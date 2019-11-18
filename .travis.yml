@@ -31,8 +31,6 @@ jobs:
         - golangci-lint run
 
     - stage: test
-      before_install:
-        - go version
       script: 
         - go test -v -race ./...
     
