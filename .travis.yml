@@ -40,7 +40,7 @@ jobs:
       before_install:
         - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io 
       script:
-        - docker build -t ${IMAGE_FQN} .
+        - docker build -f Dockerfile.msb -t ${IMAGE_FQN} .
         - docker push ${IMAGE_FQN}
 
 notifications:
