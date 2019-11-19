@@ -8,8 +8,9 @@ go:
 
 env:
   global:
-    - IMAGE_REPO="quay.io/${QUAY_USERNAME}/ibm-spectrum-scale-csi-driver"
-    - IMAGE_TAG="${TRAVIS_BRANCH}.${TRAVIS_OS_NAME}"
+    - REPO_NAME="$(basename $TRAVIS_REPO_SLUG)"
+    - IMAGE_REPO="quay.io/${QUAY_USERNAME}/${REPO_NAME}"
+    - IMAGE_TAG="${TRAVIS_BRANCH}.${TRAVIS_CPU_ARCH}"
     - IMAGE_FQN="${IMAGE_REPO}:${IMAGE_TAG}"
 
 stages:
@@ -35,12 +36,17 @@ jobs:
         - go test -v -race ./...
     
     - stage: build
-      before_install:
-        - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io 
       script:
-        - docker build -f Dockerfile.msb -t ${IMAGE_FQN} .
-        - docker push ${IMAGE_FQN}
-      if: env(QUAY_USERNAME) IS present
+        - docker build -f Dockerfile.msb -t ${REPO_NAME} .
+
+deploy:
+  provider: script
+  script:
+    - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io
+    - docker tag ${REPO_NAME} ${IMAGE_FQN}
+    - docker push ${IMAGE_FQN}
+  on:
+    condition: env(QUAY_USERNAME) IS present
 
 notifications:
     email: false
