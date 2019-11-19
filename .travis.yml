@@ -46,7 +46,7 @@ deploy:
     - docker push ${IMAGE_FQN}
   on:
     all_branch: true
-    condition: env(QUAY_USERNAME) IS present
+    condition: env(QUAY_BOT_USERNAME) IS present
 
 notifications:
   email: false
