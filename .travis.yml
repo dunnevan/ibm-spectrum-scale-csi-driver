@@ -40,6 +40,7 @@ jobs:
       script:
         - docker build -f Dockerfile.msb -t ${IMAGE_FQN} .
         - docker push ${IMAGE_FQN}
+      if: env(QUAY_USERNAME) IS present
 
 notifications:
     email: false
