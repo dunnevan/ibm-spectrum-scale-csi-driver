@@ -4,7 +4,7 @@ services: docker
 
 language: go
 go:
-    - "1.13"
+  - "1.13"
 
 env:
   global:
@@ -21,20 +21,19 @@ stages:
 jobs:
   fast_finish: true
   include:
-    
     # Lint with with .golangci.yml configuration
     - stage: lint
       before_install:
         - >-
-            curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh |
-            sh -s -- -b $(go env GOPATH)/bin v1.21.0 # pinned
+          curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh |
+          sh -s -- -b $(go env GOPATH)/bin v1.21.0 # pinned
       script:
         - golangci-lint run
 
     - stage: test
-      script: 
+      script:
         - go test -v -race ./...
-    
+
     - stage: build
       script:
         - docker build -f Dockerfile.msb -t ${REPO_NAME} .
@@ -46,7 +45,8 @@ deploy:
     - docker tag ${REPO_NAME} ${IMAGE_FQN}
     - docker push ${IMAGE_FQN}
   on:
+    all_branch: true
     condition: env(QUAY_USERNAME) IS present
 
 notifications:
-    email: false
+  email: false
