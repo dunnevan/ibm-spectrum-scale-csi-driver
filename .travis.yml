@@ -8,9 +8,10 @@ go:
 
 env:
   global:
-    - REPO_OWNER="$(if [[ -z $QUAY_USERNAME ]]; then dirname $TRAVIS_REPO_SLUG; else echo $QUAY_USERNAME; fi)"
+    - REPO_OWNER="$(dirname $TRAVIS_REPO_SLUG)"
     - REPO_NAME="$(basename $TRAVIS_REPO_SLUG)"
-    - IMAGE_REPO="quay.io/${REPO_OWNER}/${REPO_NAME}"
+    - IMAGE_REPO_OWNER="${QUAY_BOT_USERNAME%%\+*}"
+    - IMAGE_REPO="quay.io/${IMAGE_REPO_OWNER}/${REPO_NAME}"
     - IMAGE_TAG="${TRAVIS_BRANCH}"
     - IMAGE_FQN="${IMAGE_REPO}:${IMAGE_TAG}"
 
@@ -42,11 +43,11 @@ jobs:
           - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io
           - docker tag ${REPO_NAME} ${IMAGE_FQN}
       deploy:
-        provider: script
-        script: docker push ${IMAGE_FQN}
-        on:
-          all_branches: true
-          condition: -n "$QUAY_BOT_USERNAME" && -n "$QUAY_BOT_PASSWORD"
+        - provider: script
+          script: docker push ${IMAGE_FQN}
+          on:
+            all_branches: true
+            condition: -n "$QUAY_BOT_USERNAME" && -n "$QUAY_BOT_PASSWORD"
 
 notifications:
   email: false
