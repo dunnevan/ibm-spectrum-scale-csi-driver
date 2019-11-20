@@ -38,16 +38,14 @@ jobs:
       script:
         - docker build -f Dockerfile.msb -t ${REPO_NAME} .
       deploy:
-        provider: script
-        script:
-          - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io
-          - docker tag ${REPO_NAME} ${IMAGE_FQN}
-          - docker push ${IMAGE_FQN}
-        on:
-          all_branch: true
-          condition: -z "$QUAY_BOT_USERNAME"
-
-
+        - provider: script
+          script:
+            - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io
+            - docker tag ${REPO_NAME} ${IMAGE_FQN}
+            - docker push ${IMAGE_FQN}
+          on:
+            all_branches: true
+            condition: -z "$QUAY_BOT_USERNAME"
 
 notifications:
   email: false
