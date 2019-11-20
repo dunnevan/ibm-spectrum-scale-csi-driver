@@ -16,8 +16,7 @@ env:
     # Format quay image target
     - IMAGE_REPO="quay.io/${IMAGE_REPO_OWNER}/${REPO_NAME}"
     # Add image tag
-    - >- 
-      IMAGE_TAG="$( 
+    - IMAGE_TAG="$( 
         if [[ TRAVIS_EVENT_TYPE == 'cron' ]]; 
         then 
             echo "nightly-#${TRAVIS_BUILD_ID}-`date -u +%F`"; 
@@ -29,8 +28,7 @@ env:
     - IMAGE_FQN="${IMAGE_REPO}:${IMAGE_TAG}"
     - IMAGE_VERSION="${IMAGE_TAG}"
     # Add image label to expire nightlies
-    - |
-      IMAGE_LABEL="$(
+    - IMAGE_LABEL="$(
         VERSION="version=${IMAGE_VERSION}";
         if [[ TRAVIS_EVENT_TYPE == 'cron' ]];
         then
