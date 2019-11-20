@@ -32,9 +32,6 @@ jobs:
     - stage: test
       script:
         - go test -v -race ./...
-      
-    - stage: build
-      script:
         - docker build -f Dockerfile.msb -t ${REPO_NAME} .
       before_deploy:
           - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io
