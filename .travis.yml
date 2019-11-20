@@ -10,7 +10,7 @@ env:
   global:
     - REPO_NAME="$(basename $TRAVIS_REPO_SLUG)"
     - IMAGE_REPO="quay.io/${QUAY_USERNAME}/${REPO_NAME}"
-    - IMAGE_TAG="${TRAVIS_BRANCH}.${TRAVIS_CPU_ARCH}"
+    - IMAGE_TAG="${TRAVIS_BRANCH}"
     - IMAGE_FQN="${IMAGE_REPO}:${IMAGE_TAG}"
 
 stages:
