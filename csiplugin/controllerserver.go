@@ -36,6 +36,11 @@ const (
 	yes = "yes"
 )
 
+const (
+	no  = "no"
+	yes = "yes"
+)
+
 type ScaleControllerServer struct {
 	Driver *ScaleDriver
 }
