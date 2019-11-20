@@ -3,6 +3,7 @@
 FROM golang:1.13.1 AS builder
 WORKDIR /go/src/github.com/IBM/ibm-spectrum-scale-csi-driver/
 COPY . .
+ARG GOFLAGS
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o _output/csi-spectrum-scale ./cmd/csi-spectrum-scale
 RUN chmod +x _output/csi-spectrum-scale
 
