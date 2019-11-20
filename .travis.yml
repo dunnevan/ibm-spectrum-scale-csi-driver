@@ -29,12 +29,11 @@ env:
     - IMAGE_VERSION=${IMAGE_TAG}
     # Add image label to expire nightlies
     - IMAGE_LABEL=$(
-        VERSION="version=${IMAGE_VERSION}";
         if [[ $TRAVIS_EVENT_TYPE == 'cron' ]];
         then
-            echo "${VERSION}\ quay.expires-after=2w";
+            echo "--label='version=${IMAGE_VERSION}' --label='quay.expires-after=2w'";
         else
-            echo ${VERSION};
+            echo "--label='version=${IMAGE_VERSION}'";
         fi
       )
 
@@ -61,7 +60,7 @@ jobs:
         - go mod vendor
       script:
         - go test -v -race ./...
-        - docker build --label=${IMAGE_LABEL} --build-arg GOFLAGS=${GOFLAGS} -f Dockerfile.msb -t ${REPO_NAME} .
+        - docker build ${IMAGE_LABEL} --build-arg GOFLAGS=${GOFLAGS} -f Dockerfile.msb -t ${REPO_NAME} .
       before_deploy:
           - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io
           - docker tag ${REPO_NAME} ${IMAGE_FQN}
