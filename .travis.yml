@@ -17,7 +17,7 @@ env:
     - IMAGE_REPO=quay.io/${IMAGE_REPO_OWNER}/${REPO_NAME}
     # Add image tag
     - IMAGE_TAG=$( 
-        if [[ TRAVIS_EVENT_TYPE == 'cron' ]]; 
+        if [[ $TRAVIS_EVENT_TYPE == 'cron' ]]; 
         then 
             echo "nightly-#${TRAVIS_BUILD_ID}-`date -u +%F`"; 
         else
