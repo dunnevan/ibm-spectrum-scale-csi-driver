@@ -8,25 +8,25 @@ go:
 
 env:
   global:
-    - REPO_OWNER="$(dirname $TRAVIS_REPO_SLUG)"
-    - REPO_NAME="$(basename $TRAVIS_REPO_SLUG)"
+    - REPO_OWNER=$(dirname $TRAVIS_REPO_SLUG)
+    - REPO_NAME=$(basename $TRAVIS_REPO_SLUG)
    
     # Grab quay username from 'user+bot_token'
-    - IMAGE_REPO_OWNER="${QUAY_BOT_USERNAME%%\+*}"
+    - IMAGE_REPO_OWNER=${QUAY_BOT_USERNAME%%\+*}
     # Format quay image target
-    - IMAGE_REPO="quay.io/${IMAGE_REPO_OWNER}/${REPO_NAME}"
+    - IMAGE_REPO=quay.io/${IMAGE_REPO_OWNER}/${REPO_NAME}
     # Add image tag
-    - IMAGE_TAG="$( 
+    - IMAGE_TAG=$( 
         if [[ TRAVIS_EVENT_TYPE == 'cron' ]]; 
         then 
-            echo 'nightly-#${TRAVIS_BUILD_ID}-`date -u +%F`'; 
+            echo "nightly-#${TRAVIS_BUILD_ID}-`date -u +%F`"; 
         else
             echo $TRAVIS_BRANCH; 
         fi
-      )"
+      )
     # Add image repo and tag
-    - IMAGE_FQN="${IMAGE_REPO}:${IMAGE_TAG}"
-    - IMAGE_VERSION="${IMAGE_TAG}"
+    - IMAGE_FQN=${IMAGE_REPO}:${IMAGE_TAG}
+    - IMAGE_VERSION=${IMAGE_TAG}
     # Add image label to expire nightlies
     - IMAGE_LABEL=$(
         VERSION="version=${IMAGE_VERSION}";
