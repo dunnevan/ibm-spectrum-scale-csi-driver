@@ -16,7 +16,6 @@ env:
 stages:
   - lint
   - test
-  - build
 
 jobs:
   fast_finish: true
@@ -33,16 +32,16 @@ jobs:
     - stage: test
       script:
         - go test -v -race ./...
-
+      
     - stage: build
       script:
         - docker build -f Dockerfile.msb -t ${REPO_NAME} .
-      deploy:
-        provider: script
-        script:
+      before_deploy:
           - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io
           - docker tag ${REPO_NAME} ${IMAGE_FQN}
-          - docker push ${IMAGE_FQN}
+      deploy:
+        provider: script
+        script: docker push ${IMAGE_FQN}
         on:
           all_branches: true
           condition: -n "$QUAY_BOT_USERNAME"
