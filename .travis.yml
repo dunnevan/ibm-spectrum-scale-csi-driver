@@ -30,7 +30,7 @@ env:
     # Add image label to expire nightlies
     - IMAGE_LABEL=$(
         VERSION="version=${IMAGE_VERSION}";
-        if [[ TRAVIS_EVENT_TYPE == 'cron' ]];
+        if [[ $TRAVIS_EVENT_TYPE == 'cron' ]];
         then
             echo "${VERSION}\ quay.expires-after=2w";
         else
