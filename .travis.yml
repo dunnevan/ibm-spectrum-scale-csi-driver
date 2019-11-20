@@ -19,7 +19,7 @@ env:
     - IMAGE_TAG=$( 
         if [[ $TRAVIS_EVENT_TYPE == 'cron' ]]; 
         then 
-            echo "nightly-#${TRAVIS_BUILD_ID}-`date -u +%F`"; 
+            echo "nightly-${TRAVIS_BUILD_ID}-`date -u +%F`"; 
         else
             echo $TRAVIS_BRANCH; 
         fi
