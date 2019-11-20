@@ -8,7 +8,6 @@ go:
 
 env:
   global:
-    - GOFLAGS="-mod=vendor" #this should not be required in Go 1.14, see https://github.com/golang/go/issues/33848
     - REPO_OWNER="$(if [[ -z $QUAY_USERNAME ]]; then dirname $TRAVIS_REPO_SLUG; else echo $QUAY_USERNAME; fi)"
     - REPO_NAME="$(basename $TRAVIS_REPO_SLUG)"
     - IMAGE_REPO="quay.io/${REPO_OWNER}/${REPO_NAME}"
@@ -32,6 +31,8 @@ jobs:
         - golangci-lint run
 
     - stage: test
+      env: 
+        - GOFLAGS="-mod=vendor" #this should not be required in Go 1.14, see https://github.com/golang/go/issues/33848
       before_script:
         - go mod vendor
       script:
