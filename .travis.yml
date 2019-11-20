@@ -8,8 +8,9 @@ go:
 
 env:
   global:
+    - REPO_OWNER="$(dirname $TRAVIS_REPO_SLUG)"
     - REPO_NAME="$(basename $TRAVIS_REPO_SLUG)"
-    - IMAGE_REPO="quay.io/${QUAY_USERNAME}/${REPO_NAME}"
+    - IMAGE_REPO="quay.io/${REPO_OWNER}/${REPO_NAME}"
     - IMAGE_TAG="${TRAVIS_BRANCH}"
     - IMAGE_FQN="${IMAGE_REPO}:${IMAGE_TAG}"
 
