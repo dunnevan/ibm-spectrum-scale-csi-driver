@@ -8,6 +8,7 @@ go:
 
 env:
   global:
+    - GOFLAGS="-mod=vendor" #this should not be required in Go 1.14, see https://github.com/golang/go/issues/33848
     - REPO_OWNER="$(if [[ -z $QUAY_USERNAME ]]; then dirname $TRAVIS_REPO_SLUG; else echo $QUAY_USERNAME; fi)"
     - REPO_NAME="$(basename $TRAVIS_REPO_SLUG)"
     - IMAGE_REPO="quay.io/${REPO_OWNER}/${REPO_NAME}"
@@ -35,7 +36,7 @@ jobs:
         - go mod vendor
       script:
         - go test -v -race ./...
-        - docker build --build-arg GOFLAGS=-mod=vendor -f Dockerfile.msb -t ${REPO_NAME} .
+        - docker build --build-arg GOFLAGS=${GOFLAGS} -f Dockerfile.msb -t ${REPO_NAME} .
       before_deploy:
           - echo "$QUAY_BOT_PASSWORD" | docker login -u "$QUAY_BOT_USERNAME" --password-stdin quay.io
           - docker tag ${REPO_NAME} ${IMAGE_FQN}
