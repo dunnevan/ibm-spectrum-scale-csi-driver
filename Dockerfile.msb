@@ -1,6 +1,6 @@
 # MULTI-STAGE BUILD for IBM Spectrum Scale CSI Driver
 
-FROM golang:1.13.1 AS builder
+FROM golang:latest AS builder
 COPY . .
 ARG GOFLAGS
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o _output/ibm-spectrum-scale-csi ./cmd/ibm-spectrum-scale-csi
