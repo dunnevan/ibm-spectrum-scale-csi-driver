@@ -69,7 +69,7 @@ Pre-requisite: Docker 17.05 or higher is installed on local build machine.
 2. Invoke multi-stage build
 
    ```
-   docker build -t ibm-spectrum-scale-csi:v1.0.0 -f Dockerfile.msb .
+   docker build -t ibm-spectrum-scale-csi:v1.0.0 -f Dockerfile .
    ```
 
    On podman setup, use *podman* command instead of *docker*
