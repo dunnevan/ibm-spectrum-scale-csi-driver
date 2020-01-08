@@ -2,9 +2,9 @@
 
 FROM golang:1.13.1 AS builder
 WORKDIR /go/src/github.com/IBM/ibm-spectrum-scale-csi-driver/
-COPY mod.go .
-COPY mod.sum .
-RUN go mod vendor
+COPY ./go.mod .
+COPY ./go.sum .
+RUN go mod download
 COPY . .
 ARG GOFLAGS
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o _output/ibm-spectrum-scale-csi ./cmd/ibm-spectrum-scale-csi
