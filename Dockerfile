@@ -8,8 +8,6 @@ RUN go mod download
 COPY . .
 ARG TARGETOS
 ARG TARGETARCH
-ARG TARGETPLATFORM
-ENV TARGETPLATFORM=$TARGETPLATFORM
 ARG GOFLAGS
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -ldflags '-extldflags "-static"' -o _output/ibm-spectrum-scale-csi ./cmd/ibm-spectrum-scale-csi
 RUN chmod +x _output/ibm-spectrum-scale-csi
